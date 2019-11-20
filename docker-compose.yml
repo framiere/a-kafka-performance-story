@@ -21,7 +21,7 @@ services:
       KAFKA_OPTS:
         -agentpath:/tmp/jprofiler11.0.2/bin/linux-x64/libjprofilerti.so=port=10001,nowait 
     volumes:
-      - $PWD/jprofiler11.0.2:/tmp/jprofiler11.0.2
+      - $PWD/jprofiler11.0.2:/tmp/jprofiler11.0.2 
     ports:
       - 10001:10001
 

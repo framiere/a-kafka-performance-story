@@ -46,9 +46,9 @@ for compressionType in none snappy gzip lz4 zstd; do
 
     docker-compose exec kafka-client kafka-producer-perf-test \
         --topic benchmark-compression-${compressionType} \
-        --num-records 15000000 \
+        --num-records 1000000 \
         --record-size 100 \
-        --throughput 15000000 \
+        --throughput -1 \
         --producer-props \
             acks=1 \
             linger.ms=100 \
@@ -58,6 +58,10 @@ for compressionType in none snappy gzip lz4 zstd; do
 done
 ```
 
+* Beware these are single threaded.
+* Beware of the data produced
+
+
 # Latency
 
 ```
@@ -65,12 +69,11 @@ docker-compose exec kafka-client kafka-run-class kafka.tools.EndToEndLatency kaf
 docker-compose exec kafka-client kafka-run-class kafka.tools.EndToEndLatency kafka-1:9092 one-partition 5000 all 100
 ```
 
-# Profiling
+# Producer
 
-````
-
+```
 docker-compose exec kafka-client bash -c \
-    "export KAFKA_OPTS=-agentpath:/tmp/jprofiler11.0.2/bin/linux-x64/libjprofilerti.so=port=20000 && \    
+    "export KAFKA_OPTS=-agentpath:/tmp/jprofiler11.0.2/bin/linux-x64/libjprofilerti.so=port=20000 && \
     kafka-producer-perf-test \
         --topic benchmark-compression-snappy \
         --num-records 15000000 \
@@ -84,8 +87,12 @@ docker-compose exec kafka-client bash -c \
             compression.type=snappy"
 ```
 
-Look at the accumulator in the Kafka Producer
-Look at the Sender
-Look at the thread history
+* Look at the accumulator in the Kafka Producer
+* Look at the Sender
+* Look at the thread history
 
-We accumulate, and batch/send
+# Broker lifecycle
+
+* replica fetcher
+* io thread
+* network thread
