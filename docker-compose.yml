@@ -1,0 +1,76 @@
+version: '2'
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper
+    container_name: zookeeper
+    hostname: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+
+  kafka-1:
+    image: confluentinc/cp-kafka
+    container_name: kafka-1
+    hostname: kafka-1
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-1:9092
+      CONFLUENT_SUPPORT_METRIC_ENABLE: "false"
+      KAFKA_OPTS:
+        -agentpath:/tmp/jprofiler11.0.2/bin/linux-x64/libjprofilerti.so=port=10001,nowait 
+    volumes:
+      - $PWD/jprofiler11.0.2:/tmp/jprofiler11.0.2
+    ports:
+      - 10001:10001
+
+  kafka-2:
+    image: confluentinc/cp-kafka
+    container_name: kafka-2
+    hostname: kafka-2
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 2
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-2:9092
+      CONFLUENT_SUPPORT_METRIC_ENABLE: "false"
+      KAFKA_OPTS:
+        -agentpath:/tmp/jprofiler11.0.2/bin/linux-x64/libjprofilerti.so=port=10002,nowait
+    ports:
+      - 10002:10002
+    volumes:
+      - $PWD/jprofiler11.0.2:/tmp/jprofiler11.0.2
+
+  kafka-3:
+    image: confluentinc/cp-kafka
+    container_name: kafka-3
+    hostname: kafka-3
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 3
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-3:9092
+      CONFLUENT_SUPPORT_METRIC_ENABLE: "false"
+      KAFKA_OPTS:
+        -agentpath:/tmp/jprofiler11.0.2/bin/linux-x64/libjprofilerti.so=port=10003,nowait
+    ports:
+      - 10003:10003
+    volumes:
+      - $PWD/jprofiler11.0.2:/tmp/jprofiler11.0.2
+
+  kafka-client:
+    image: confluentinc/cp-kafka
+    container_name: kafka-client
+    entrypoint: /bin/sh -c "sleep 10000000"
+    depends_on:
+      - kafka-1
+      - kafka-2
+      - kafka-3
+      - zookeeper
+    ports:
+      - 20000:20000
+    volumes:
+      - $PWD/jprofiler11.0.2:/tmp/jprofiler11.0.2
