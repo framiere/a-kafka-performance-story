@@ -65,8 +65,20 @@ done
 # Latency
 
 ```
-docker-compose exec kafka-client kafka-run-class kafka.tools.EndToEndLatency kafka-1:9092 demo 5000 all 100
-docker-compose exec kafka-client kafka-run-class kafka.tools.EndToEndLatency kafka-1:9092 one-partition 5000 all 100
+docker-compose exec kafka-client kafka-run-class \
+    kafka.tools.EndToEndLatency \
+    kafka-1:9092 \
+    demo \
+    5000 \
+    all \
+    100
+docker-compose exec kafka-client kafka-run-class \
+    kafka.tools.EndToEndLatency \
+    kafka-1:9092 \
+    one-partition \
+    5000 \
+    all \
+    100
 ```
 
 # Producer
